@@ -1,6 +1,7 @@
 import './App.css';
 import { Component } from 'react';
 import axios from 'axios';
+import PropTypes from 'prop-types';
 
 const DEFAULT_QUERY = 'redux';
 const PATH_BASE = 'https://hn.algolia.com/api/v1';
@@ -92,7 +93,7 @@ class App extends Component {
   }
 
   onSearchChange(event) {
-    this.setState({searchTerm: event.target.value});
+    this.setState({ searchTerm: event.target.value });
   }
 
   render() {
@@ -162,6 +163,13 @@ const Search  = ({ value, onChange, children, onSubmit }) =>
       </Button>
   </form>
 
+Search.propTypes = {
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  children: PropTypes.node.isRequired,
+  onSubmit: PropTypes.func.isRequired
+}
+
 const Table = ({ list, onDismiss }) => 
       <div className="table"> 
         {list.map(item => 
@@ -185,6 +193,11 @@ const Table = ({ list, onDismiss }) =>
           )}
       </div>
 
+Table.propTypes = {
+  list: PropTypes.array.isRequired,
+  onDismiss: PropTypes.func.isRequired
+}
+
 const Button = ({ onClick, className="", children}) => 
       <button 
         onClick={onClick}
@@ -193,6 +206,12 @@ const Button = ({ onClick, className="", children}) =>
       >
         {children}
       </button>
+
+Button.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  className: PropTypes.string,
+  children: PropTypes.node.isRequired
+}
 
 const InfoRow = () => 
   <div className="table-row">
