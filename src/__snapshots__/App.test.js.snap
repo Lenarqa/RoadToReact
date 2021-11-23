@@ -1,7 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`App Have correct screenshot 1`] = `null`;
-
 exports[`App Есть скриншот 1`] = `null`;
 
 exports[`Button Есть скриншот 1`] = `
@@ -17,17 +15,9 @@ exports[`Search Есть скриншот 1`] = `
     type="text"
   />
   <button
-    className=""
-    type="button"
+    type="submit"
   />
 </form>
-`;
-
-exports[`Table Есть скриншот 1`] = `
-<button
-  className=""
-  type="button"
-/>
 `;
 
 exports[`Table есть корректный снимок 1`] = `
