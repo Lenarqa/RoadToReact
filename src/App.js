@@ -15,11 +15,13 @@ const PARAM_HPP = 'hitsPerPage='
 class App extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       results: null,
       searchKey: '',
       searchTerm: DEFAULT_QUERY,
       error: null,
+      isLoading: false,
     };
 
     this.needsToSearchTopStories = this.needsToSearchTopStories.bind(this);
@@ -35,6 +37,8 @@ class App extends Component {
   }
 
   fetchSearchTopStory(searchTerm, page = 0) {
+    this.setState({ isLoading: true });
+
     axios(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`)
       .then(result => this.setSearchTopStory(result.data))
       .catch(error => this.setState({ error }));
@@ -67,8 +71,9 @@ class App extends Component {
     this.setState({ 
       results: {
         ...results, 
-        [searchKey]: { hits: updatedHits, page } 
-      } 
+        [searchKey]: { hits: updatedHits, page },
+      },
+      isLoading: false
     });
   }
 
@@ -101,7 +106,8 @@ class App extends Component {
       searchTerm, 
       results, 
       searchKey,
-      error
+      error,
+      isLoading
     } = this.state;
     
     const page = (
@@ -121,11 +127,20 @@ class App extends Component {
     return (
       <div className="page">
         <div className="interactions">
-          <Search 
+          {/* <Search 
             value={searchTerm}
             onChange={this.onSearchChange}
             onSubmit={this.onSearchSubmit}
-          >Поиск</Search>
+          >Поиск</Search> */}
+          {
+            <SearchClassComponent
+              value={searchTerm}
+              onChange={this.onSearchChange}
+              onSubmit={this.onSearchSubmit}  
+            >
+              Search
+            </SearchClassComponent>
+          }
         </div>
         <InfoRow />
         {
@@ -139,12 +154,18 @@ class App extends Component {
               onDismiss={this.onDismiss}
             />
         }
-
+        
         <div className="interactions">
-          <Button onClick={() => this.fetchSearchTopStory(searchKey, page + 1)}>
-              More history
-          </Button>
+          {
+              isLoading 
+              ? <Loading />
+              : <Button onClick={() => this.fetchSearchTopStory(searchKey, page + 1)}>
+                  More history
+                </Button>
+          }
+          
         </div>
+        
         
       </div>
     );
@@ -158,9 +179,9 @@ const Search  = ({ value, onChange, children, onSubmit }) =>
         value={value}
         onChange={onChange}
       />
-      <Button type="submit">
+      <button type="submit">
         {children}
-      </Button>
+      </button>
   </form>
 
 Search.propTypes = {
@@ -169,6 +190,36 @@ Search.propTypes = {
   children: PropTypes.node.isRequired,
   onSubmit: PropTypes.func.isRequired
 }
+
+class SearchClassComponent extends Component {
+  componentDidMount () {
+    if(this.input) {
+      this.input.focus();
+    }
+  }
+
+  render () {
+    const { 
+      value,
+      onChange,
+      children,
+      onSubmit 
+    } = this.props; 
+    return (
+      <form onSubmit={onSubmit}>
+        <input 
+          type="text"
+          value={value}
+          onChange={onChange}
+          ref = {node => { this.input = node; }}
+        />
+        <button type="submit">
+          {children}
+        </button>
+      </form>
+    )
+  }
+} 
 
 const Table = ({ list, onDismiss }) => 
       <div className="table"> 
@@ -225,6 +276,8 @@ const InfoRow = () =>
       <h3>Action</h3>
     </span>
   </div>
+
+const Loading = () => <div> Loading... </div>
 
 export default App;
 
